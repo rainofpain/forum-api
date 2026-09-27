@@ -1,6 +1,9 @@
+import { type Post, type NewPost } from "../transport/dto/post.js";
+
 class Repository {
+    posts: Post[];
     constructor() {
-        this.posts = [
+        this.posts= [
             {
                 id: 1,
                 title: "My Favorite Books",
@@ -25,7 +28,7 @@ class Repository {
         ];
     }
 
-    getAll(category, take){
+    getAll(category: string | undefined, take: number | undefined){
         let postsList = [];
 
         if(!take && !category){
@@ -43,15 +46,15 @@ class Repository {
         return postsList;
     }
 
-    getById(id){
+    getById(id: number){
         const post = this.posts.find(post => post.id === id);
         return post;
     }
 
-    addPost(newPost){
+    addPost(newPost: NewPost){
         return new Promise((resolve, reject) => {
             setTimeout(() => {
-                const nextId = this.posts.length > 0 ? this.posts[this.posts.length - 1].id + 1 : 1;
+                const nextId = (this.posts[this.posts.length - 1]?.id ?? 0) + 1;
                 
                 const createdPost = {
                     id: nextId,

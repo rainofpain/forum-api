@@ -1,11 +1,15 @@
 import PostRepository from "../repositories/post.js"; 
+import {type NewPost} from "../transport/dto/post.js";
 
 class Service {
+
+    repository: PostRepository;
+
     constructor(){
         this.repository = new PostRepository();
     }
 
-    getAll(category, take){
+    getAll(category?: string, take?: string){
         const numberTake = Number(take);
         if (take && (numberTake <= 0 || !Number.isInteger(numberTake))){
             throw new Error("take param must be integer and greater than zero");
@@ -16,23 +20,21 @@ class Service {
         return this.repository.getAll(category, numberTake);
     }
 
-    getById(id){
+    getById(id: string){
         const numberId = Number(id);
         if (id && (numberId <= 0 || !Number.isInteger(numberId))){
-            const error = new Error("Invalid id value");
-            error.status = 422;
+            const error = Object.assign(new Error("Invalid id value"), { status: 422 })
             throw error;
         }
         const post = this.repository.getById(numberId);
         if(!post){
-            const error = new Error("Not found");
-            error.status = 404;
+            const error = Object.assign(new Error("Not found"), { status: 422 });
             throw error;
         }
         return post;
     }
 
-    async addPost(body){
+    async addPost(body: NewPost){
         const { title, author, category, content } = body || {};
   
         const requiredFields = [title, author, category, content];
