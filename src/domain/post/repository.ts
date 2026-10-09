@@ -1,9 +1,10 @@
 import type { Post } from "./entity.js";
 
+type PostBody = Omit<Post, "id">;
 
 
 export interface PostRepository{
-    getAll(category?:string, take?: number): Post[]
-    getById(id: number): Post | undefined
-    addPost(post:Post): Promise<Post>
+    getAll(category?:string, take?: number): Promise<Post[]>
+    getById(id: number): Promise<Post | null>
+    addPost(post:PostBody): Promise<Post>
 }
