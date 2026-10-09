@@ -1,15 +1,11 @@
 import type { Post } from "../domain/post/entity.js";
 import type { PostRepository } from "../domain/post/repository.js";
+import { db } from '../prisma/db.js';
 
-export function createPostRepository(): PostRepository{
+export type DatabaseType = typeof db;
+
+export function createPostRepository(db: DatabaseType): PostRepository{
     let posts: Post[] = [
-        {
-            id: 1,
-            title: "My Favorite Books",
-            content: "Today I want to share a list of books that changed my life and helped me grow.",
-            author: "Tom Wilson",
-            category: "Hobbies"
-        },
         {
             id: 2,
             title: "How to Cook Pancakes",
@@ -27,42 +23,31 @@ export function createPostRepository(): PostRepository{
     ];
 
     return{
-        getAll(category?: string, take?: number){
-            let postsList = [];
+        async getAll(category?: string, take?: number){
+           
+            let query = db.orm.public.Post;
+            
+            if(take){
+                query = query.limit(take);
+            }
 
-            if(!take && !category){
-                postsList = [...posts];
+            if(category){
+                query = query.where({ category: category });
             }
-            else if(!take){
-                postsList = [...posts.filter(post => post.category === category)];
-            }
-            else if(!category){
-                postsList = [...posts.slice(0, take)];
-            }
-            else{
-                postsList = [...posts.filter(post => post.category === category).slice(0, take)];
-            }
-            return postsList;
+
+            return await query.all();
         },
 
-        getById(id: number){
-            const post = posts.find(post => post.id === id);
-            return post;
+        async getById(id: number){
+            return await db.orm.public.Post.where({ id }).first();
         },
 
-        addPost(newPost){
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    const nextId = (posts[posts.length - 1]?.id ?? 0) + 1;
-                    
-                    const createdPost = {
-                        id: nextId,
-                        ...newPost
-                    };
-
-                    posts.push(createdPost);
-                    resolve(createdPost); 
-                }, 200);
+        async addPost(newPost){
+            return await db.orm.public.Post.create({
+                title: newPost.title,
+                content: newPost.content,
+                category: newPost.category,
+                author: newPost.author
             });
         }
     }

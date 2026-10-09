@@ -5,18 +5,18 @@ import type { PostError } from '../dto/post/errors.js';
 import type { Request,  Response } from 'express';
 
 export interface PostHandler{
-    getAll(req: Request<{}, {}, {}, { category?: string, take?: string }>, res: Response<PostResponse[]| PostError>): Response
-    getById(req: Request<{id:string},{},{},{}>, res: Response<PostResponse | PostError>): Response
+    getAll(req: Request<{}, {}, {}, { category?: string, take?: string }>, res: Response<PostResponse[]| PostError>): Promise<Response>
+    getById(req: Request<{id:string},{},{},{}>, res: Response<PostResponse | PostError | null>): Promise<Response>
     addPost(req: Request<{}, {}, PostRequest, {}>, res: Response<PostResponse | PostError>): Promise<Response>
 }
 
 export function createPostHandler(service: PostService): PostHandler{
 
     return{
-        getAll(req, res){
+        async getAll(req, res){
             const {category, take} = req.query;
             try{
-                const allPosts = service.getAll(category, take);
+                const allPosts = await service.getAll(category, take);
                 return res.status(200).json(allPosts);
             }
             catch(error){
@@ -27,10 +27,10 @@ export function createPostHandler(service: PostService): PostHandler{
             }
         },
 
-        getById(req, res){
+        async getById(req, res){
             const {id} = req.params;
             try{
-                const post = service.getById(String(id));
+                const post = await service.getById(String(id));
                 return res.status(200).json(post);
             }
             catch(error){
