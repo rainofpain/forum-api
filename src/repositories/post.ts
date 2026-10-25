@@ -5,23 +5,7 @@ import { db } from '../prisma/db.js';
 export type DatabaseType = typeof db;
 
 export function createPostRepository(db: DatabaseType): PostRepository{
-    let posts: Post[] = [
-        {
-            id: 2,
-            title: "How to Cook Pancakes",
-            content: "A simple and quick recipe for delicious homemade pancakes for your perfect morning.",
-            author: "Anna Green",
-            category: "Cooking"
-        },
-        {
-            id: 3,
-            title: "Morning Routine Tips",
-            content: "Small habits like drinking water and stretching can make your whole day much better.",
-            author: "Ben Taylor",
-            category: "Lifestyle"
-        }
-    ];
-
+   
     return{
         async getAll(category?: string, take?: number){
            
