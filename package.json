@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/orm-postgres": "^8.0.0-rc.17",
+    "argon2": "^0.45.1",
     "dotenv": "^18.0.6",
     "express": "^5.2.1",
     "tsx": "^4.23.15",
