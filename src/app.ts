@@ -9,6 +9,7 @@ import { createUserHandler } from './transport/handlers/user.js';
 import { createUserRouter } from './transport/routers/user.js';
 import { passwordHasher } from './lib/password.js'
 import { db } from './prisma/db.js';
+import cors from 'cors';
 
 const postRepository = createPostRepository(db);
 const postService = createPostService(postRepository);
@@ -20,6 +21,7 @@ const userHandlers = createUserHandler(userService)
 const userRouter = createUserRouter(userHandlers)
 
 const app = express();
+app.use(cors({ origin: 'http://localhost:5173'}));
 app.use(express.json());
 app.use('/posts', postRouter);
 app.use('/', userRouter);
