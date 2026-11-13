@@ -6,9 +6,10 @@ export const passwordHasher = {
         if (!pepper) {
             throw new Error('PASSWORD_PEPPER is not defined in environment variables');
         }
-        
+        const pepperBuffer = Buffer.from(pepper);
         return argon2.hash(password, {
             type: argon2.argon2id,
+            secret: pepperBuffer,
             memoryCost: 19456,
             timeCost: 2,
             parallelism: 1,
